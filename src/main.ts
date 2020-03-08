@@ -82,7 +82,7 @@ export async function run(): Promise<void> {
       owner: context.repo.owner,
       repo: context.repo.repo,
       // eslint-disable-next-line @typescript-eslint/camelcase
-      head_sha: context.sha,
+      head_sha: context.payload.pull_request?.head.sha,
       status: "in_progress",
       conclusion: "action_required",
       // eslint-disable-next-line @typescript-eslint/camelcase
