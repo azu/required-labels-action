@@ -71,7 +71,7 @@ export async function run(): Promise<void> {
     setOutput('required_labels', 'ok');
   } catch (error) {
     const GITHUB_TOKEN = getInput('GITHUB_TOKEN', { required: true });
-    const state = getInput('status', {required: false}) ?? "error";
+    const state = getInput('state', {required: false}) ?? "error";
     if (!isStatusState(state)) {
       return setFailed(`status must be one of ${StatusStates.join(",")}`);
     }
