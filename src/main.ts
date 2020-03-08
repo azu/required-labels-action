@@ -72,7 +72,6 @@ export async function run(): Promise<void> {
   } catch (error) {
     const GITHUB_TOKEN = getInput('GITHUB_TOKEN', { required: true });
     const pullrequestState = getInput('pullrequest_state', {required: false}) ?? "error";
-    console.log("pullrequestState", pullrequestState);
     if (!isStatusState(pullrequestState)) {
       return setFailed(`state must be one of ${StatusStates.join(",")}`);
     }
@@ -83,8 +82,9 @@ export async function run(): Promise<void> {
       repo: context.repo.repo,
       sha: context.sha,
       state: pullrequestState,
-      description: error.message,
-      "target_url": context.workflow
+      description: error.message
+    }).catch(error => {
+      console.error(error);
     });
     if (pullrequestState !== "pending") {
       setFailed(error.message);
