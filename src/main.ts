@@ -71,9 +71,10 @@ export async function run(): Promise<void> {
     setOutput('required_labels', 'ok');
   } catch (error) {
     const GITHUB_TOKEN = getInput('GITHUB_TOKEN', { required: true });
-    const state = getInput('state', {required: false}) ?? "error";
-    if (!isStatusState(state)) {
-      return setFailed(`status must be one of ${StatusStates.join(",")}`);
+    const pullrequestState = getInput('pullrequest_state', {required: false}) ?? "error";
+    console.log("pullrequestState", pullrequestState);
+    if (!isStatusState(pullrequestState)) {
+      return setFailed(`state must be one of ${StatusStates.join(",")}`);
     }
     const octokit = new GitHub(GITHUB_TOKEN);
     // https://developer.github.com/v3/repos/statuses/#create-a-status
@@ -81,11 +82,11 @@ export async function run(): Promise<void> {
       owner: context.repo.owner,
       repo: context.repo.repo,
       sha: context.sha,
-      state: state,
+      state: pullrequestState,
       description: error.message,
       "target_url": context.workflow
     });
-    if (state !== "pending") {
+    if (pullrequestState !== "pending") {
       setFailed(error.message);
     }
   }
