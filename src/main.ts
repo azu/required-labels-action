@@ -86,8 +86,6 @@ export async function run(): Promise<void> {
     }).catch(error => {
       console.error(error);
     });
-    if (pullrequestState !== "pending") {
-      setFailed(error.message);
-    }
+    setFailed(error.message);
   }
 }
