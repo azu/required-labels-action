@@ -77,12 +77,24 @@ export async function run(): Promise<void> {
     }
     const octokit = new GitHub(GITHUB_TOKEN);
     // https://developer.github.com/v3/repos/statuses/#create-a-status
-    await octokit.repos.createStatus({
+    await octokit.checks.create({
+      name: "required-labels-action",
       owner: context.repo.owner,
       repo: context.repo.repo,
-      sha: context.sha,
-      state: pullrequestState,
-      description: error.message
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      head_sha: context.sha,
+      status: "in_progress",
+      conclusion: "action_required",
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      completed_at: new Date().toISOString(),
+      request: {
+        retries: 3,
+        retryAfter: 3
+      },
+      output: {
+        title: "Labels mismatch",
+        summary: error.message
+      }
     }).catch(error => {
       console.error(error);
     });
