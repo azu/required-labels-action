@@ -1,5 +1,5 @@
 import { getInput, setOutput, setFailed } from '@actions/core';
-import { context } from '@actions/github';
+import { GitHub, context } from '@actions/github';
 import { uniq, includesOneof } from './utils';
 
 type LabelsItem = {
@@ -11,6 +11,11 @@ type LabelsItem = {
   node_id: string;
   url: string;
 }
+
+const StatusStates = ["error", "failure", "pending", "success"] as const;
+const isStatusState = (state: any): state is typeof StatusStates[number] => {
+  return StatusStates.includes(state)
+};
 
 export async function run(): Promise<void> {
   try {
@@ -65,6 +70,36 @@ export async function run(): Promise<void> {
 
     setOutput('required_labels', 'ok');
   } catch (error) {
-    setFailed(error.message);
+    const GITHUB_TOKEN = getInput('GITHUB_TOKEN', { required: true });
+    const pullrequestState = getInput('pullrequest_state', {required: false}) ?? "error";
+    if (!isStatusState(pullrequestState)) {
+      return setFailed(`state must be one of ${StatusStates.join(",")}`);
+    }
+    const octokit = new GitHub(GITHUB_TOKEN);
+    // https://developer.github.com/v3/repos/statuses/#create-a-status
+    await octokit.checks.create({
+      name: "check-label",
+      owner: context.repo.owner,
+      repo: context.repo.repo,
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      head_sha: context.payload.pull_request?.head.sha,
+      status: "in_progress",
+      conclusion: "neutral",
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      completed_at: new Date().toISOString(),
+      request: {
+        retries: 3,
+        retryAfter: 3
+      },
+      output: {
+        title: "Labels mismatch",
+        summary: error.message
+      }
+    }).catch(error => {
+      console.error(error);
+    });
+    if (pullrequestState !== "pending") {
+      setFailed(error.message);
+    }
   }
 }

@@ -14,6 +14,8 @@ A GitHub Actions that automated label checking for pull requests.
 |required_all|false|All of these comma separated labels must be present on all Pull requests|
 |required_oneof|false|At only one of these comma separated labels should be present on all Pull requests|
 |banned|false|None of these comma separated labels can be present on all Pull requests|
+|pullrequest_state|false|'Pull Request state when label check is failed. One of "error", "failure", "pending", "success"'|
+|GITHUB_TOKEN|true|GITHUB_TOKEN for setting Pull Request status. Use `${{ secrets.GITHUB_TOKEN }}`|
 
 ### Outputs
 
@@ -38,4 +40,5 @@ jobs:
         with:
           required_all: 'approved'
           required_oneof: 'patch,minor,major'
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```

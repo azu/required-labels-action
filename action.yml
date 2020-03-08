@@ -14,6 +14,12 @@ inputs:
   banned:
     description: 'None of these comma separated labels can be present on all Pull requests'
     required: false
+  pullrequest_state:
+    description: 'Pull Request state when label check is failed. One of "error", "failure", "pending", "success"'
+    required: false
+  GITHUB_TOKEN:
+    description: 'GITHUB_TOKEN for setting Pull Request status.'
+    required: true
 runs:
   using: 'node12'
   main: 'dist/index.js'
