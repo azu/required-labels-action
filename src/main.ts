@@ -78,7 +78,7 @@ export async function run(): Promise<void> {
     const octokit = new GitHub(GITHUB_TOKEN);
     // https://developer.github.com/v3/repos/statuses/#create-a-status
     await octokit.checks.create({
-      name: "required-labels-action",
+      name: "check-label",
       owner: context.repo.owner,
       repo: context.repo.repo,
       // eslint-disable-next-line @typescript-eslint/camelcase
@@ -98,6 +98,8 @@ export async function run(): Promise<void> {
     }).catch(error => {
       console.error(error);
     });
-    setFailed(error.message);
+    if (pullrequestState !== "pending") {
+      setFailed(error.message);
+    }
   }
 }
