@@ -84,6 +84,7 @@ export async function run(): Promise<void> {
       // eslint-disable-next-line @typescript-eslint/camelcase
       head_sha: context.payload.pull_request?.head.sha,
       status: "in_progress",
+      conclusion: "neutral",
       // eslint-disable-next-line @typescript-eslint/camelcase
       completed_at: new Date().toISOString(),
       request: {
