@@ -18,3 +18,5 @@ jobs:
         with:
           required_all: 'approved'
           required_oneof: 'patch,minor,major'
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          status: "pending"
