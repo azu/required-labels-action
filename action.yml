@@ -15,7 +15,7 @@ inputs:
     description: 'None of these comma separated labels can be present on all Pull requests'
     required: false
   GITHUB_TOKEN:
-    description: 'GITHUB_TOKEN for setting Pull Request status. ${{ secrets.GITHUB_TOKEN }}'
+    description: 'GITHUB_TOKEN for setting Pull Request status.'
     required: true
 runs:
   using: 'node12'
